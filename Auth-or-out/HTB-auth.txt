@@ -1,0 +1,70 @@
+Offsets:
+
+main 		- 1971
+add_author	- 14b1
+ta_init		- 0b6b
+
+plt_puts	- 07e0
+got_puts	- 2f90
+
+Struct of Author:
+
+0x00 Author->Name
+0x10 Author->Surname
+0x20 Author->Note = ptr->Note
+0x28 Author->Age
+0x30 Author->print = &PrintNote
+0x38 is Note
+
+
+struct Block {
+    void *addr;
+    Block *next;
+    size_t size;
+};
+
+
+typedef struct {
+    Block *free;   // first free block
+    Block *used;   // first used block
+    Block *fresh;  // first available blank block
+    size_t top;    // top free addr
+} Heap;
+
+
+Attack Plan
+
+
+1. Add 2 authors, first author has small note. Set second author's note size bigger.
+2. Modify author 1, setting surname to 17bytes leaks ptr->Note
+3. Delete author 1
+4. Add another author, setting note size -1
+5. From leaked author 1's ptr->Note, calculate offset to PrintNote of author 2
+6. Leak libc address
+7. 
+
+
+
+
+
+
+
+
+ta_init(const void *base, const void *limit, const size_t heap_blocks, const size_t split_thresh, const size_t alignment)
+
+ta_init ( CustomHeap, endofheap, 10, 16, 8 ) -> initialise heap linked lists on stack
+
+CustomHeap[14336] is main's local variable
+
+00007ffccf151860
+
+00007ffccf155060
+
+
+
+In add_author
+
+rax=0xffffffffffffffff.  -1
+
+At offset 15a5, ta_alloc(0)
+

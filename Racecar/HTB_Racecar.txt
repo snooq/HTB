@@ -1,0 +1,18 @@
+HTB{why_d1d_1_s4v3_th3_fl4g_0n_t?!}
+AAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+Location of 26 + 5 words -> ptr to stream
+
+
+Break offset 0xf8d
+
+26 + 11 --> saved EBP
+
+
+Ret to main+96, offset 0x1441
+
+Canary at EBP-0xC
+
+
+0x78 - 0x14 to saved EIP
