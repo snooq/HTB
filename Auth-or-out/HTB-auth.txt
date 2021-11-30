@@ -5,7 +5,7 @@ add_author	- 14b1
 ta_init		- 0b6b
 
 plt_puts	- 07e0
-got_puts	- 2f90
+got_puts	- 202f90
 
 Struct of Author:
 
@@ -34,16 +34,16 @@ typedef struct {
 
 Attack Plan
 
-
-1. Add 2 authors, first author has small note. Set second author's note size bigger.
+1. Add 2 authors
 2. Modify author 1, setting surname to 17bytes leaks ptr->Note
 3. Delete author 1
 4. Add another author, setting note size -1
 5. From leaked author 1's ptr->Note, calculate offset to PrintNote of author 2
 6. Leak libc address
-7. 
+7. Overwrite PrintNote with system() 
+8. Trigger call with print and set ptr->Note to /bin/sh
 
-
+Special note: It turned out get_from_user is null friendly. This negate the need of writing multiple times.
 
 
 
